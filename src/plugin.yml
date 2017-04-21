@@ -1,0 +1,9 @@
+name: AutoWiki
+main: net.richardsprojects.autowiki.AutoWiki
+version: 1.0.0
+prefix: 'AutoWiki'
+
+commands:
+  wiki:
+    description: Looks up the entered topic on the Minecraft Wiki.
+    usage: /<command> <topic>
