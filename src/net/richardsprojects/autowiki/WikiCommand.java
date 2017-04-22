@@ -126,7 +126,8 @@ public class WikiCommand implements CommandExecutor {
                     if (elements.size() > 0) {
                         String description = elements.get(0).text();
 
-                        // TODO: Remove references ([1]) from descriptions.
+                        // regex to remove references ([1]) from descriptions.
+                        description = description.replaceAll("\\[\\d+\\]", "");
 
                         // create book content
                         ComponentBuilder cb = new ComponentBuilder(ChatColor.DARK_GRAY + "" +
