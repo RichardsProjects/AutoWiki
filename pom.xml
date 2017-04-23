@@ -6,7 +6,7 @@
 
     <groupId>net.richardsprojects</groupId>
     <artifactId>AutoWiki</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
 
 
     <properties>
@@ -17,7 +17,7 @@
     <packaging>jar</packaging>
 
     <build>
-        <finalName>AutoWiki_v${project.version}</finalName>
+        <finalName>AutoWiki-${project.version}</finalName>
         <sourceDirectory>src</sourceDirectory>
 
         <resources>

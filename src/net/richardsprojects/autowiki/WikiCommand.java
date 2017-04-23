@@ -20,6 +20,7 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -48,7 +49,6 @@ public class WikiCommand implements CommandExecutor {
             return true;
         } else {
             return false;
-            // TODO: Add a 10 second cool-down
         }
     }
 
@@ -63,6 +63,20 @@ public class WikiCommand implements CommandExecutor {
         }
 
         public void run() {
+            // check against cooldown
+            if (plugin.lastWikiLookup.containsKey(player.getUniqueId())) {
+                Date currentTime = new Date();
+                long currentTimestamp = currentTime.getTime() / 1000;
+                long lastExecutedTimestamp = plugin.lastWikiLookup.get(player.getUniqueId());
+
+                if ((currentTimestamp - 10) <= lastExecutedTimestamp) {
+                    long timeRemaining = 10 - (currentTimestamp - lastExecutedTimestamp);
+                    player.sendMessage(ChatColor.RED + "Please wait " + timeRemaining + " seconds" +
+                            " before searching the Wiki again.");
+                    return;
+                }
+            }
+
             String topic;
             String topicUnderscore;
 
@@ -141,6 +155,11 @@ public class WikiCommand implements CommandExecutor {
                         pages.add(page);
 
                         bookTitle = topic;
+
+                        // only prevent them from using the command if actual content was returned
+                        Date currentTime = new Date();
+                        long currentTimestamp = currentTime.getTime() / 1000;
+                        plugin.lastWikiLookup.put(player.getUniqueId(), currentTimestamp);
                     } else {
                         String msg = ChatColor.RED + "Unable to find any results for that topic.";
                         player.sendMessage(msg);
