@@ -57,7 +57,7 @@ public class WikiCommand implements CommandExecutor {
         private String[] args;
         private Player player;
 
-        public WikiLookupTask(String[] args, Player player) {
+        WikiLookupTask(String[] args, Player player) {
             this.args = args;
             this.player = player;
         }
@@ -143,9 +143,17 @@ public class WikiCommand implements CommandExecutor {
                         // regex to remove references ([1]) from descriptions.
                         description = description.replaceAll("\\[\\d+\\]", "");
 
-                        // create book content
-                        ComponentBuilder cb = new ComponentBuilder(ChatColor.DARK_GRAY + "" +
-                                ChatColor. BOLD + topic + "\n\n");
+                        // create topic title with link
+                        ComponentBuilder cb = new ComponentBuilder("");
+                        cb.color(ChatColor.BLUE);
+                        cb.bold(true);
+                        cb.underlined(true);
+                        String url = "http://minecraft.gamepedia.com/" + topicUnderscore;
+                        cb.append(topic).event(new ClickEvent(ClickEvent.Action.OPEN_URL, url))
+                            .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                                    new ComponentBuilder(url).create()));
+                        cb.append("\n\n");
+
                         cb.reset();
                         cb.append(description);
 
@@ -166,21 +174,10 @@ public class WikiCommand implements CommandExecutor {
                     }
                 }
 
-                // create the book and give it to the player
-                if (bookTitle != null && !pages.isEmpty()) {
-                    final ItemStack book = Utils.newBook(bookTitle, "Minecraft Wiki", pages);
-                    if (!player.getInventory().addItem(book).isEmpty()) {
-                        // drop the book on the ground for them in the main thread
-                        new BukkitRunnable() {
-                            public void run() {
-                                player.getWorld().dropItem(player.getLocation(), book);
-                            }
-                        }.runTask(plugin);
 
-                    } else {
-                        player.updateInventory();
-                    }
-                }
+                // create the book and show it to the player
+                ItemStack book = Utils.newBook(bookTitle, pages);
+                Utils.openBook(player, book);
             } catch (IOException e) {
                 player.sendMessage(ChatColor.RED + "The Minecraft Wiki could not accessed. Check " +
                         "your internet connection");
